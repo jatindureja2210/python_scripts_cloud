@@ -12,21 +12,21 @@ app = FastAPI()
 
 SUBSCRIPTION_ID = os.getenv("SUBSCRIPTION_ID")
 
-# 🔹 Access control
+# Access control
 user_access = {
     "userA": ["jatinkvs"],
     "userB": ["test-one"],
     "userC": []
 }
 
-# 🔹 Request model
+#  Request model
 class SecretRequest(BaseModel):
     vault_name: str
     key: str
     value: str
 
 
-# 🔹 List vaults (simpler)
+# List vaults (simpler)
 @app.get("/vaults")
 def list_vaults():
     credential = AzureCliCredential()
@@ -34,21 +34,21 @@ def list_vaults():
 
     vaults = []
 
-    # ✅ No filter, direct listing
+    #  No filter, direct listing
     for kv in client.vaults.list():
         vaults.append(kv.name)
 
     return {"vaults": vaults}
 
 
-# 🔹 Key Vault client
+#  Key Vault client
 def get_kv_client(vault_name):
     credential = AzureCliCredential()
     vault_url = f"https://{vault_name}.vault.azure.net/"
     return SecretClient(vault_url=vault_url, credential=credential)
 
 
-# 🔹 Store secret (restricted)
+# Store secret (restricted)
 @app.post("/store-secret")
 def store_secret(data: SecretRequest, user: str = Header(...)):
 
